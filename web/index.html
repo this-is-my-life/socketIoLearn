@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <title>Socket.io 배우는중</title>
+  </head>
+  <body>
+    <input type="text" id="author" placeholder="Nickname">
+    <input type="text" id="content" style="width: 500px;" placeholder="Type message">
+    <button id="send">send!</button>
+
+    <hr />
+
+    <textarea id="render" style="width: 800px; height: 500px; background-color: white;" disabled></textarea>
+
+    <script>
+      const socket = io();
+      const aElem = document.getElementById('author')
+      const cElem = document.getElementById('content')
+      const sElem = document.getElementById('send')
+      const rElem = document.getElementById('render')
+
+      cElem.addEventListener('keypress', (e) => {
+        if (e.charCode !== 13) return
+        sendMsg()
+      })
+
+      sElem.addEventListener('click', sendMsg)
+
+      socket.on('msg', (msg) => {
+        rElem.value += '\n' + msg.author + ': ' + msg.content
+      })
+
+      function sendMsg () {
+        if (aElem.value.length < 1 || cElem.value.length < 1) return
+        socket.emit('msg', { author: aElem.value, content: cElem.value })
+        cElem.value = ''
+      }
+    </script>    
+  </body>
+</html>
